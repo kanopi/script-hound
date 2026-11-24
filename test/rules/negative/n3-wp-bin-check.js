@@ -1,0 +1,1 @@
+jQuery('#card_number').on('blur',function(){var v=jQuery(this).val();if(!/^[0-9 ]{12,19}$/.test(v)){jQuery('.cc-error').show();}else{jQuery.post('/wp-admin/admin-ajax.php',{action:'validate_card_bin',bin:v.slice(0,6)});}});

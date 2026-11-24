@@ -1,0 +1,66 @@
+{
+  "_comment": "Global settings for every site. Copy to config.json. sites.json can override per site. See docs/rules.md.",
+  "options": {
+    "profiles": [
+      "desktop",
+      "mobile"
+    ],
+    "waitMs": 4000,
+    "timeoutMs": 45000,
+    "concurrency": 3
+  },
+  "allowDomains": [
+    "googletagmanager.com",
+    "google-analytics.com",
+    "google.com",
+    "gstatic.com",
+    "googleapis.com",
+    "doubleclick.net",
+    "youtube.com",
+    "ytimg.com",
+    "vimeo.com",
+    "cloudflare.com",
+    "cloudflareinsights.com",
+    "jsdelivr.net",
+    "unpkg.com",
+    "stripe.com",
+    "paypal.com",
+    "hubspot.com",
+    "hs-scripts.com",
+    "hsforms.net",
+    "facebook.net",
+    "facebook.com",
+    "linkedin.com",
+    "licdn.com",
+    "wp.com",
+    "gravatar.com"
+  ],
+  "blockDomains": [],
+  "volatileScripts": [
+    "googletagmanager.com",
+    "google-analytics.com",
+    "www.google.com/recaptcha",
+    "www.gstatic.com/recaptcha",
+    "connect.facebook.net",
+    "doubleclick.net",
+    "hs-scripts.com",
+    "hs-analytics.net"
+  ],
+  "rules": {
+    "obfuscator-io": {
+      "severity": "off",
+      "reason": "Minified vendor bundles trip this too often for us"
+    },
+    "new-inline-script": "info"
+  },
+  "customRules": [
+    {
+      "id": "retired-cdn",
+      "severity": "medium",
+      "target": "url",
+      "pattern": "cdn\\.oldvendor\\.example",
+      "description": "Request to a CDN we retired"
+    }
+  ],
+  "suppress": []
+}

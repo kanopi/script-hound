@@ -1,0 +1,42 @@
+{
+  "name": "scripthound",
+  "version": "1.0.0",
+  "private": true,
+  "description": "ScriptHound sniffs out malicious front-end code: a passive front-end security scanner for malicious scripts (skimmers, injected code, loaders, miners, CSS keyloggers), front-end weaknesses (XSS sinks, vulnerable libraries, CSP/headers) and changes, in a real headless browser.",
+  "keywords": [
+    "security",
+    "magecart",
+    "skimmer",
+    "xss",
+    "csp",
+    "pci-dss",
+    "playwright",
+    "scanner"
+  ],
+  "homepage": "https://github.com/kanopi/script-hound#readme",
+  "bugs": {
+    "url": "https://github.com/kanopi/script-hound/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kanopi/script-hound.git"
+  },
+  "license": "Apache-2.0",
+  "author": "Kanopi Studios",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "bin": {
+    "scripthound": "./scan"
+  },
+  "scripts": {
+    "scan": "./scan",
+    "baseline": "./scan --update-baseline",
+    "test": "node test/run-test.mjs"
+  },
+  "dependencies": {
+    "playwright": "1.63.0",
+    "tldts": "^7.0.0"
+  }
+}

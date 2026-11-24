@@ -1,0 +1,12 @@
+<!doctype html><html><head><title>Posture</title>
+<script src="/js/jquery-1.12.4.min.js"></script>
+<script src="http://localhost:PORT2/widget.js"></script>
+<script>
+  document.cookie = 'js_pref=1; path=/';
+  localStorage.setItem('access_token', 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjMifQ.c2lnbmF0dXJl');
+  // Deliberate DOM-XSS sink for the canary test: writes the URL fragment into the page as HTML.
+  window.addEventListener('DOMContentLoaded', function () {
+    document.getElementById('out').innerHTML = decodeURIComponent(location.hash.slice(1));
+  });
+</script>
+</head><body><div id="out"></div><p>posture fixture</p></body></html>

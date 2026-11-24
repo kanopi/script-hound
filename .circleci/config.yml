@@ -1,0 +1,81 @@
+version: 2.1
+
+# ScriptHound: sniffs out malicious front-end code
+# - Scheduled: add a schedule trigger in Project Settings → Triggers and set the
+#   pipeline parameter run-fe-scan = true.
+# - On demand: "Trigger Pipeline" in the CircleCI UI (or the API) with run-fe-scan = true.
+#   Optionally pass scan-urls (comma-separated) to scan ad-hoc URLs instead of sites.json,
+#   or scan-site to scan one named site from sites.json. scan-mode / scan-sitemap /
+#   scan-max-pages switch on crawl or sitemap discovery.
+
+parameters:
+  # (parameter name kept from before the ScriptHound rename, so existing schedules keep working)
+  run-fe-scan:
+    type: boolean
+    default: false
+  scan-urls:
+    type: string
+    default: ""
+  scan-site:
+    type: string
+    default: ""
+  scan-mode:
+    type: enum
+    enum: ["", "url", "crawl", "sitemap"]
+    default: ""        # "" = use each site's mode from sites.json (default url)
+  scan-sitemap:
+    type: string
+    default: ""
+  scan-max-pages:
+    type: string
+    default: ""
+  fail-on:
+    type: enum
+    enum: ["none", "high", "medium", "low"]
+    default: "none"   # report only; switch to "high" later to make the job go red
+
+jobs:
+  scripthound:
+    docker:
+      # Keep this tag in step with the "playwright" version in package.json.
+      - image: mcr.microsoft.com/playwright:v1.63.0-noble
+    resource_class: medium
+    environment:
+      SCAN_URLS: << pipeline.parameters.scan-urls >>
+      SCAN_SITE: << pipeline.parameters.scan-site >>
+      SCAN_FAIL_ON: << pipeline.parameters.fail-on >>
+      SCAN_MODE: << pipeline.parameters.scan-mode >>
+      SCAN_SITEMAP: << pipeline.parameters.scan-sitemap >>
+      SCAN_MAX_PAGES: << pipeline.parameters.scan-max-pages >>
+      SCAN_FORMAT: html,md
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - npm-v1-{{ checksum "package-lock.json" }}
+      - run:
+          name: Install
+          command: npm ci --no-audit --no-fund
+      - save_cache:
+          key: npm-v1-{{ checksum "package-lock.json" }}
+          paths: [~/.npm]
+      - run:
+          name: Scan
+          no_output_timeout: 30m
+          command: node scan.mjs --config sites.json --baseline baseline.json --out reports
+      - run:
+          name: Summary
+          when: always
+          command: test -f reports/report.md && head -c 20000 reports/report.md || echo "No report produced"
+      - store_artifacts:
+          path: reports
+          destination: scripthound
+
+workflows:
+  scripthound:
+    when:
+      or:
+        - << pipeline.parameters.run-fe-scan >>
+        - equal: [scheduled_pipeline, << pipeline.trigger_source >>]
+    jobs:
+      - scripthound

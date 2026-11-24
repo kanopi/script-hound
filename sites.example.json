@@ -1,0 +1,70 @@
+{
+  "sites": [
+    {
+      "name": "Example Client",
+      "firstParty": [
+        "example.com",
+        "example-cdn.com"
+      ],
+      "urls": [
+        "https://www.example.com/",
+        "https://www.example.com/contact",
+        "https://www.example.com/donate"
+      ],
+      "interactions": [
+        {
+          "match": "/donate",
+          "steps": [
+            {
+              "click": "text=Give by card",
+              "label": "open card form"
+            },
+            {
+              "type": "input[name=cardnumber]",
+              "value": "4111111111111111",
+              "frame": "iframe[title*=card i]",
+              "label": "type card"
+            },
+            {
+              "wait": 1500
+            }
+          ]
+        },
+        {
+          "match": "/checkout",
+          "script": "interactions/example.mjs"
+        }
+      ],
+      "rules": {
+        "form-harvest-generic": {
+          "severity": "low",
+          "reason": "Session-replay vendor on this site, reviewed"
+        }
+      },
+      "customRules": [
+        {
+          "id": "old-theme-file",
+          "severity": "medium",
+          "target": "code",
+          "pattern": "theme-v1-legacy",
+          "description": "Reference to the pre-2025 theme bundle"
+        },
+        {
+          "id": "unexpected-inline-pixel",
+          "severity": "low",
+          "target": "html",
+          "pattern": "<img[^>]+tracking-pixel\\.example",
+          "flags": "i",
+          "description": "Hard-coded tracking pixel in the HTML"
+        }
+      ],
+      "suppress": [
+        {
+          "rule": "base64-blob",
+          "script": "/wp-content/plugins/fancy-fonts/",
+          "reason": "Embedded font data, reviewed 2026-11"
+        }
+      ]
+    }
+  ]
+}

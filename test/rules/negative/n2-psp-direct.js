@@ -1,0 +1,1 @@
+function tokenize(){var x=new XMLHttpRequest();x.open('POST','https://api.stripe.com/v1/tokens');x.setRequestHeader('Authorization','Bearer pk_test_x');x.send('card[number]='+document.getElementById('card_number').value+'&card[cvc]='+document.getElementById('card_cvc').value);}document.getElementById('pay').addEventListener('click',tokenize);

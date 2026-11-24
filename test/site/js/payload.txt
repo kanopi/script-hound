@@ -1,0 +1,1 @@
+var cfg = { key: 'sk_test_DYNAMICEXAMPLE000000' }; window.__payloadRan = true;

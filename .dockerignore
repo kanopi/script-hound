@@ -1,0 +1,11 @@
+node_modules
+reports
+test
+.circleci
+.git
+*.md
+sites.json
+baseline*.json
+Claude.md
+Claude outputs
+brand/png
