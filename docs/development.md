@@ -104,7 +104,7 @@ The image is published on Docker Hub as [`kanopi/script-hound`](https://hub.dock
 1. Bump `version` in `package.json` (semver: patch for fixes, minor for new checks or options, major for breaking changes to options or `report.json`).
 2. `make check`. Everything must pass, including the image smoke test.
 3. Commit and tag: `git tag v1.2.0 && git push --tags`.
-4. `docker login`, then `make docker-push`. This builds amd64 and arm64 and pushes `kanopi/script-hound:1.2.0` and `:latest` as one multi-arch image, with the version in its OCI labels.
+4. `docker login`, then `make docker-push`. This builds amd64 and arm64 and pushes `kanopi/script-hound:1.2.0` and `:latest` as one multi-arch image, with the version in its OCI labels. It uses a dedicated buildx builder, `scripthound-builder` (`docker-container` driver), created on first run, because Docker Desktop's default builder can't build multi-arch images unless the containerd image store is turned on. Your default builder isn't changed.
 5. Check it with `docker run --rm kanopi/script-hound:1.2.0 --help` (the first line shows the version) and on Docker Hub.
 6. If usage changed, update the Docker Hub overview: paste `docs/docker-hub.md` (below its header comment) into the repository's Overview. The short description is in the same comment.
 

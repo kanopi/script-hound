@@ -15,6 +15,8 @@ VERSION  := $(shell node -p "require('./package.json').version" 2>/dev/null)
 PLATFORM ?=
 # Architectures for docker-push (multi-arch manifest).
 PLATFORMS ?= linux/amd64,linux/arm64
+# buildx builder used by docker-push (docker-container driver, created on first use).
+BUILDER  ?= scripthound-builder
 URL      ?=
 SITEMAP  ?=
 ARGS     ?=
@@ -78,7 +80,10 @@ docker-push: ## Build amd64 + arm64 and push $(IMAGE):<version> and :latest to t
 	@test -n "$(VERSION)" || (echo "Couldn't read the version from package.json" && exit 2)
 	@case "$(IMAGE)" in */*) ;; *) echo "IMAGE must be a registry repo, e.g. kanopi/script-hound" && exit 2;; esac
 	@case "$(IMAGE)" in *:*) echo "IMAGE must not include a tag; the version comes from package.json" && exit 2;; esac
-	docker buildx build --platform $(PLATFORMS) --build-arg VERSION=$(VERSION) -t $(IMAGE):$(VERSION) -t $(IMAGE):latest --push .
+	@# Docker's default "docker" builder can't build multi-arch images (unless the containerd image store is
+	@# on), so use a dedicated docker-container builder. Created once; your default builder isn't changed.
+	@docker buildx inspect $(BUILDER) >/dev/null 2>&1 || docker buildx create --name $(BUILDER) --driver docker-container >/dev/null
+	docker buildx build --builder $(BUILDER) --platform $(PLATFORMS) --build-arg VERSION=$(VERSION) -t $(IMAGE):$(VERSION) -t $(IMAGE):latest --push .
 	@echo "Pushed $(IMAGE):$(VERSION) and $(IMAGE):latest ($(PLATFORMS))"
 
 docker-test: ## Run the test suite inside the Playwright image
